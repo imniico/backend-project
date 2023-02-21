@@ -1,0 +1,65 @@
+[
+    {
+        "id": 0,
+        "title": "Mouse",
+        "description": "Description Mouse",
+        "price": 9000,
+        "thumbnail": "mouse.png",
+        "code": 123,
+        "stock": 10
+    },
+    {
+        "id": 1,
+        "title": "Auriculares",
+        "description": "Description Auriculares",
+        "price": 19000,
+        "thumbnail": "auriculares.png",
+        "code": 125,
+        "stock": 20
+    },
+    {
+        "id": 2,
+        "title": "Teclado",
+        "description": "Description Teclado",
+        "price": 17000,
+        "thumbnail": "teclado.png",
+        "code": 127,
+        "stock": 30
+    },
+    {
+        "id": 3,
+        "title": "Mousepad",
+        "description": "Description Mousepad",
+        "price": 5000,
+        "thumbnail": "mousepad.png",
+        "code": 129,
+        "stock": 20
+    },
+    {
+        "id": 4,
+        "title": "Monitor",
+        "description": "Description Monitor",
+        "price": 49000,
+        "thumbnail": "monitor.png",
+        "code": 133,
+        "stock": 25
+    },
+    {
+        "id": 5,
+        "title": "Placa de video",
+        "description": "Description Placa de video",
+        "price": 129000,
+        "thumbnail": "placavideo.png",
+        "code": 135,
+        "stock": 35
+    },
+    {
+        "id": 6,
+        "title": "Gabinete",
+        "description": "Description Gabinete",
+        "price": 15000,
+        "thumbnail": "gabinete.png",
+        "code": 137,
+        "stock": 20
+    }
+]
