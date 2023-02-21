@@ -10,3 +10,5 @@ Es el número de la clase con la que corresponde la entrega
 `<<Nombre de la entrega>>`
 Nombre o tema de la entrega
 
+### Nota: la última versión del repo siempre será válida para la entrega.
+
