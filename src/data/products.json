@@ -61,5 +61,32 @@
         "thumbnail": "gabinete.png",
         "code": 137,
         "stock": 20
+    },
+    {
+        "id": 7,
+        "title": "Cable HDMI",
+        "description": "Description HDMI",
+        "price": 3000,
+        "thumbnail": "hdmi.png",
+        "code": 139,
+        "stock": 100
+    },
+    {
+        "id": 8,
+        "title": "Parlante",
+        "description": "Description Parlante",
+        "price": 15000,
+        "thumbnail": "parlante.png",
+        "code": 143,
+        "stock": 15
+    },
+    {
+        "id": 9,
+        "title": "Notebook",
+        "description": "Description Notebook",
+        "price": 175000,
+        "thumbnail": "notebook.png",
+        "code": 135,
+        "stock": 5
     }
 ]
