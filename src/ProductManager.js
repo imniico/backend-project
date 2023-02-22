@@ -45,7 +45,7 @@ export default class ProductManager {
         if (prodEncontrado) {
             return prodEncontrado;
         }
-        return "Not found";
+        return `Producto con ID:${id} no encontrado`;
     }
 
     async updateProduct(id, obj) {
