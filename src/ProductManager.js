@@ -29,7 +29,7 @@ export default class ProductManager {
             status: true
         }
 
-        const validarCode = products.find((prod) => prod.code === nuevoProducto.code)
+        const validarCode = products.find((prod) => Number(prod.code) === Number(nuevoProducto.code))
         if (validarCode) {
             console.log(`Ya existe producto con code ${nuevoProducto.code}!`)
             return;

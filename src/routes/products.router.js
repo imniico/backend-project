@@ -26,11 +26,16 @@ productsRouter.get("/:pid", async (req, res) => {
 
 
 // POST /
-productsRouter.post("/", async (req, res) => {
+productsRouter.post("/", async (req, res, next) => {
     const { title, description, price, code, stock, category } = req.body;
     const newProduct = { title, description, price, code, stock, category }
 
-    manager.addProduct(newProduct);
+    await manager.addProduct(newProduct);
+
+    const products = await manager.getProducts();
+    req.io.emit("lista-productos", products);
+    next();
+
     res.send(newProduct);
 });
 
