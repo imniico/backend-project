@@ -31,8 +31,8 @@
 
     <h1> Productos en tiempo real </h1>
     <ul id="listado">
-        {{#each products}}
-            <li> ID:{{id}} - Titulo:{{title}} - Precio:{{price}} - Stock: {{stock}} - Code: {{code}} </li>
+        {{#each docs}}
+            <li> ID:{{_id}} - Titulo:{{title}} - Precio:{{price}} - Stock: {{stock}} - Code: {{code}} </li>
         {{/each}}
     </ul>
 

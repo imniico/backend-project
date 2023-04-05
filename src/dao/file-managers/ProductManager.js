@@ -41,7 +41,7 @@ export default class ProductManager {
 
     async getProductsById(id) {
         const products = await this.getProducts();
-        const prodEncontrado = products.find((prod) => id === prod.id);
+        const prodEncontrado = products.find((prod) => Number(id) === Number(prod.id));
         
         if (prodEncontrado) {
             return prodEncontrado;
@@ -51,7 +51,7 @@ export default class ProductManager {
 
     async updateProduct(id, obj) {
         const products = await this.getProducts();
-        const product = products.find((prod) => id === prod.id);
+        const product = products.find((prod) => Number(id) === Number(prod.id));
         
         if (product) {
             const keys = Object.keys(obj);
@@ -67,7 +67,7 @@ export default class ProductManager {
 
     async deleteProduct(id) {
         const products = await this.getProducts();
-        const product = products.find((prod) => id === prod.id);
+        const product = products.find((prod) => Number(id) === Number(prod.id));
         
         if (product){
             const updatedProducts = products.filter((prod) => prod.id != id);
@@ -75,5 +75,7 @@ export default class ProductManager {
         } else {
             console.log("Producto no existe para eliminar");
         }
+
+        return product;
     }
 }

@@ -1,8 +1,8 @@
 <div>
     <h1> Productos </h1>
     <ul>
-        {{#each products}}
-            <li> ID:{{id}} - Titulo:{{title}} - Precio:{{price}} - Stock: {{stock}} - Code: {{code}} </li>
+        {{#each products.docs}}
+            <li> ID:{{_id}} - Titulo:{{title}} - Precio:{{price}} - Stock: {{stock}} - Code: {{code}} </li>
         {{/each}}
     </ul>
 </div>

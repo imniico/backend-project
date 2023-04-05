@@ -1,5 +1,5 @@
 import { Router, json } from 'express';
-import ProductManager from '../ProductManager.js';
+import ProductManager from '../dao/db-managers/product.manager.js';
 
 const productsRouter = Router();
 const manager = new ProductManager('./src/data/products.json');
@@ -9,34 +9,39 @@ productsRouter.use(json());
 
 // GET /
 productsRouter.get("/", async (req, res) => {
-    const { limit } = req.query;
-    const products = await manager.getProducts();
+    const { limit, page, sort, category } = req.query;
+    const products = await manager.getProducts(limit, page, sort, category);
+
+    const { docs, ...pagination } = products;
     
-    limit ? res.status(200).send(products.slice(0, limit)) : res.send(products);
+    res.send({ status:"ok", payload: docs, ...pagination});
 });
 
 
 // GET /:pid
 productsRouter.get("/:pid", async (req, res) => {
     const { pid } = req.params;
-    const productFound = await manager.getProductsById(Number(pid));
-
-    res.send(productFound);
+    const productFound = await manager.getProductsById(pid);
+    
+    if(productFound){
+        res.send({ status:"ok", payload: productFound });
+    } else {
+        res.send({ status:"error", payload:`Producto con id ${pid} no encontrado` });
+    };
 });
 
 
 // POST /
 productsRouter.post("/", async (req, res, next) => {
     const { title, description, price, code, stock, category } = req.body;
-    const newProduct = { title, description, price, code, stock, category }
+    const result = await manager.addProduct({ title, description, price, code, stock, category });
 
-    await manager.addProduct(newProduct);
-
-    const products = await manager.getProducts();
-    req.io.emit("lista-productos", products);
+    //middle-webosockets
+    const products = await manager.getProducts(1000);
+    req.io.emit("lista-productos", products.docs);
     next();
 
-    res.send(newProduct);
+    res.status(201).send({ status:"ok", payload: result });
 });
 
 
@@ -44,18 +49,18 @@ productsRouter.post("/", async (req, res, next) => {
 productsRouter.put("/:pid", async (req, res) => {
     const { pid } = req.params;
     const { title, description, price, code, stock, category, thumbnails, status } = req.body;
-    const updatedProduct = { title, description, price, code, stock, category, thumbnails, status }
+    const updatedProductData = { title, description, price, code, stock, category, thumbnails, status }
 
-    manager.updateProduct(Number(pid), updatedProduct);
-    res.send({ pid, ...updatedProduct });
+    const result = await manager.updateProduct(pid, updatedProductData);
+    res.status(201).send({ status:"ok", payload: result });
 })
 
 
 // DELETE /:pid
 productsRouter.delete("/:pid", async (req, res) => {
     const { pid } = req.params;
-
-    manager.deleteProduct(Number(pid));
+    const resultado = await manager.deleteProduct(pid);
+    res.send(resultado);
 })
 
 

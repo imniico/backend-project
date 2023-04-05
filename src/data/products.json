@@ -84,10 +84,9 @@
         "id": 9,
         "title": "Notebook",
         "description": "Description Notebook",
-        "price": 175000,
+        "price": 200000,
         "thumbnail": "notebook.png",
-        "code": 135,
-        "stock": 5,
-        "category": "Notebooks"
+        "code": 147,
+        "stock": 20
     }
 ]
