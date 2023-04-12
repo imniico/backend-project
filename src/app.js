@@ -1,43 +1,61 @@
+// librerias
 import express, { urlencoded } from 'express';
-import productsRouter from './routes/products.router.js';
-import cartsRouter from './routes/carts.router.js';
-import __dirname from './utils.js';
 import { engine } from 'express-handlebars';
-import viewsRouter from './routes/views.router.js';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
+import session from 'express-session';
+import MongoStore from "connect-mongo";
+
+// utilidades
+import __dirname from './utils.js';
 import ChatManager from './dao/db-managers/chat.manager.js';
 
+// routes
+import productsRouter from './routes/products.router.js';
+import cartsRouter from './routes/carts.router.js';
+import viewsRouter from './routes/views.router.js';
+import authRouter from "./routes/auth.router.js"
+
+// app
 const app = express();
 const messages = [];
 const chatManager = new ChatManager();
 
-//handlebars
+// handlebars
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
-//uses
+// uses
 app.use(express.static(__dirname + '/../public'));
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: "mongodb+srv://imniico:imniicopass@nicocluster.9pxn0oe.mongodb.net/ecommerce?retryWrites=true&w=majority"
+    }),
+    secret: "nicopass",
+    resave: true,
+    saveUninitialized: true
+}));
 
-//middle
+// middle
 app.use((req, res, next) => {
     req.io = io;
     next();
 })
 
-//routers
+// routes
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/api/sessions", authRouter);
 app.use("/", viewsRouter);
 
 const httpServer = app.listen(8080, () => {
     console.log('Server escuchando en 8080');
 });
 
-//websockets
+// websockets
 const io = new Server(httpServer);
 io.on("connection", (socket) => {
     console.log("Nuevo cliente conectado!");
@@ -54,7 +72,7 @@ io.on("connection", (socket) => {
     })
 });
 
-//mongodb
+// mongodb connect
 mongoose
     .connect("mongodb+srv://imniico:imniicopass@nicocluster.9pxn0oe.mongodb.net/ecommerce?retryWrites=true&w=majority")
     .then((conn) => {

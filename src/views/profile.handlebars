@@ -1,0 +1,14 @@
+<h1> Perfil </h1>
+
+{{#if user}}
+
+<h1> Email: {{ user }}</h1>
+<form method="post" action="/api/sessions/logout">
+    <button type="submit"> Logout </button>
+</form>
+
+{{else}}
+
+<h2> No logueado </h2>
+
+{{/if}}

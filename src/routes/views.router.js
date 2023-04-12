@@ -28,7 +28,7 @@ viewsRouter.get("/chat", async (req, res) => {
 viewsRouter.get("/products", async (req, res) => {
     const { limit, page, sort, category } = req.query;
     const products = await manager.getProducts(limit, page, sort, category);
-    res.render("products", { products });
+    res.render("products", { products, user: req.session.user });
 })
 
 viewsRouter.get("/carts/:cid", async (req, res) => {
@@ -39,6 +39,16 @@ viewsRouter.get("/carts/:cid", async (req, res) => {
     res.render("cart", { cart });
 })
 
-//cart cid
+viewsRouter.get("/login", (req, res) => {
+    res.render("login");
+})
+
+viewsRouter.get("/signup", (req, res) => {
+    res.render("signup");
+})
+
+viewsRouter.get("/profile", (req, res) => {
+    res.render("profile", { user: req.session.user } );
+})
 
 export default viewsRouter;

@@ -1,5 +1,14 @@
 <div>
 
+    {{#if user}}
+    <h1> Bienvenido {{ user }} ! </h1>
+    <form method="post" action="/api/sessions/logout">
+        <button type="submit"> Logout </button>
+    </form>
+    {{else}}
+    <h2> No logueado </h2>
+    {{/if}}
+
     <h1> Products </h1>
 
     <ul>
@@ -12,7 +21,9 @@
 
     <div>
         {{#if products.hasPrevPage}}
-        <a href="/products?page={{products.prevPage}}&limit={{products.limit}}&sort={{products.sort}}&{{products.queryURL}}"> Anterior </a>
+        <a
+            href="/products?page={{products.prevPage}}&limit={{products.limit}}&sort={{products.sort}}&{{products.queryURL}}">
+            Anterior </a>
         {{/if}}
     </div>
 
@@ -22,8 +33,10 @@
 
     <div>
         {{#if products.hasNextPage}}
-        <a href="/products?page={{products.nextPage}}&limit={{products.limit}}&sort={{products.sort}}&{{products.queryURL}}"> Siguiente </a>
+        <a
+            href="/products?page={{products.nextPage}}&limit={{products.limit}}&sort={{products.sort}}&{{products.queryURL}}">
+            Siguiente </a>
         {{/if}}
     </div>
-    
+
 </div>
