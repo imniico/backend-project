@@ -5,12 +5,12 @@ import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import MongoStore from "connect-mongo";
-import passport from 'passport'; //
+import passport from 'passport'; 
 
 // utilidades
 import __dirname from './utils.js';
 import ChatManager from './dao/db-managers/chat.manager.js';
-import { initializedPassport } from './config/passport.config.js'; //
+import { initializedPassport } from './config/passport.config.js'; 
 
 // routes
 import productsRouter from './routes/products.router.js';
@@ -41,10 +41,10 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// config passport
-initializedPassport(); //
-app.use(passport.initialize()); //
-app.use(passport.session()); //
+// passport
+initializedPassport(); 
+app.use(passport.initialize()); 
+app.use(passport.session()); 
 
 // middle
 app.use((req, res, next) => {

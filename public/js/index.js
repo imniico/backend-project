@@ -1,3 +1,36 @@
+const signupForm = document.getElementById("signup-form");
+
+signupForm.addEventListener("submit", async(e) => {
+    e.preventDefault();
+    const formValues = {
+        email: signupForm.email.value,
+        password: signupForm.password.value
+    };
+    const response = await fetch("http://localhost:8080/api/sessions/signup", {
+        method: "POST",
+        headers: {
+            'Content-type':'application/json'
+        },
+        body: JSON.stringify(formValues)
+    });
+    const data = await response.json();
+    localStorage.setItem("token", data.accessToken);
+
+
+    const res = await fetch("http://localhost:8080/profile", {
+        method: "GET",
+        headers: {
+            'Content-type':'application/json',
+            Authorization : `Bearer ${localStorage.getItem("token")}`
+        }
+    });
+     /// ?
+
+    
+
+})
+
+
 const socket = io();
 
 let username;
@@ -54,3 +87,4 @@ socket.on("new-user", (username) => {
         position: "top-end"
     });
 })
+

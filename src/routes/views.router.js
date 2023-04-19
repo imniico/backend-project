@@ -1,6 +1,6 @@
 import { Router, json } from 'express';
 import ProductManager from '../dao/db-managers/product.manager.js';
-import CartManager from '../dao/db-managers/cart.manager.js'
+import CartManager from '../dao/db-managers/cart.manager.js';
 
 const viewsRouter = Router();
 const manager = new ProductManager('./src/data/products.json');
@@ -56,11 +56,11 @@ viewsRouter.get("/profile", (req, res) => {
 })
 
 viewsRouter.get("/failure-signup", (req, res) => {
-    res.send("Error al registrarse!");
+    res.send("<h1> Error al registrarse! </h1>");
 })
 
 viewsRouter.get("/failure-login", (req, res) => {
-    res.send("Error al loguearse!");
+    res.send("<h1> Error al loguearse! </h1>");
 })
 
 export default viewsRouter;

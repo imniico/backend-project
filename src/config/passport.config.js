@@ -1,7 +1,9 @@
 import passport from "passport";
 import LocalStrategy from "passport-local";
+import GithubStrategy from "passport-github2";
 import userModel from "../dao/models/user.model.js";
 import { createHash, isValidPassword } from "../utils.js";
+
 
 const initializedPassport = () => {
     passport.use("signupStrategy", new LocalStrategy(
@@ -10,10 +12,11 @@ const initializedPassport = () => {
             passReqToCallback: true
         },
         async (req, username, password, done) => {
-
             try {
                 const user = await userModel.findOne({ email: username })
-                if (user) { return done(null, false); }
+                if (user) {
+                    return done(null, false);
+                }
                 let rol;
                 const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
                 regex.test(username) ? rol = "admin" : rol = "usuario";
@@ -23,9 +26,6 @@ const initializedPassport = () => {
                     rol
                 };
                 const userCreated = await userModel.create(newUser);
-                // req.session.user = result.email;
-                // req.session.rol = result.rol;
-                // console.log(req.session)
                 return done(null, userCreated);
             } catch (error) {
                 return done(error);
@@ -41,8 +41,6 @@ const initializedPassport = () => {
         async(req, username, password, done) => {
             try {
                 const user = await userModel.findOne({ email: username })
-                console.log(user)
-                console.log(password)
                 if (user && isValidPassword(user, password)){
                     return done(null, user);
                 } else {
@@ -52,7 +50,55 @@ const initializedPassport = () => {
                 return done(error);
             }
         }
+    ));
+
+    passport.use("githubSignup", new GithubStrategy(
+        {
+            clientID: "Iv1.c3a4c189d177e207",
+            clientSecret: "3fcb82a1434e14fb85fa30a1c2574fdb3aad3e10",
+            callbackURL: "http://localhost:8080/api/sessions/github-callback"
+        },
+        async(accessToken, refreshToken, profile, done) => {
+            try {
+                const userExists = await userModel.findOne({ email: profile.username })
+                if(userExists){
+                    return done(null, false) // userExists
+                }
+                // let rol;
+                // const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
+                // regex.test(profile.username) ? rol = "admin" : rol = "usuario";
+                const newUser = {
+                    email: profile.username,
+                    password: createHash(profile.id),
+                    rol: "usuario" // hardcoded 
+                };
+                const userCreated = await userModel.create(newUser);
+                return done(null, userCreated);
+            } catch (error) {
+                return done(error);
+            }
+        }
     ))
+
+    passport.use("githubLogin", new GithubStrategy(
+        {
+            clientID: "Iv1.c3a4c189d177e207",
+            clientSecret: "3fcb82a1434e14fb85fa30a1c2574fdb3aad3e10",
+            callbackURL: "http://localhost:8080/api/sessions/github-callback-login"
+        },
+        async(accessToken, refreshToken, profile, done) => {
+            try {
+                const user = await userModel.findOne({ email: profile.username })
+                if (user && isValidPassword(user, profile.id)){
+                    return done(null, user);
+                } else {
+                    return done(null, false);
+                }                
+            } catch (error) {
+                return done(error);
+            }
+        }
+    ));
 
     // Serializar y Deserializar
     passport.serializeUser((user, done) => {
