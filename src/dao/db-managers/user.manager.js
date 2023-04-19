@@ -1,4 +1,5 @@
-import userModel from "../models/user.model.js"
+import userModel from "../models/user.model.js";
+import { createHash, isValidPassword } from "../../utils.js";
 
 export default class UserManager {
     constructor() {
@@ -10,7 +11,12 @@ export default class UserManager {
 
         try {
             regex.test(email) ? rol = "admin" : rol = "usuario";
-            const result = await userModel.create({ email, password, rol })
+            const newUser = {
+                email,
+                password: createHash(password),
+                rol
+            }
+            const result = await userModel.create(newUser)
             return result;
         } catch (error){
             return false;
@@ -20,7 +26,7 @@ export default class UserManager {
 
     login = async (email, password) => {
         const result = await userModel.find({ email })
-        if (result.length && password === result[0].password) {
+        if (result.length && isValidPassword(result[0], password)) {
             return result[0].email;
         } else {
             return false;

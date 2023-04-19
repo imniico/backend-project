@@ -48,7 +48,19 @@ viewsRouter.get("/signup", (req, res) => {
 })
 
 viewsRouter.get("/profile", (req, res) => {
-    res.render("profile", { user: req.session.user } );
+    if (req.user) {
+        res.render("profile", { email: req.user.email });
+    } else {
+        res.send("No logueado!")
+    }
+})
+
+viewsRouter.get("/failure-signup", (req, res) => {
+    res.send("Error al registrarse!");
+})
+
+viewsRouter.get("/failure-login", (req, res) => {
+    res.send("Error al loguearse!");
 })
 
 export default viewsRouter;

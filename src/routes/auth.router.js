@@ -1,32 +1,33 @@
 import { Router } from 'express';
 import UserManager from '../dao/db-managers/user.manager.js';
+import passport from 'passport';
+
 
 const router = Router();
 const manager = new UserManager();
 
-router.post("/signup", async (req, res) => {
-    const { email, password } = req.body;
-    const result = await manager.signup(email, password);
-    
-    if (result) {
-        req.session.user = result.email;
-        req.session.rol = result.rol;
-        res.redirect("/profile");
-    } else {
-        res.send("Usuario ya registrado!")
-    }
+router.post("/signup", passport.authenticate("signupStrategy", {
+    failureRedirect:"/failure-signup"
+}), (req, res) => {
+    res.redirect("/profile")
 })
 
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    const result = await manager.login(email, password);
+// router.post("/login", async (req, res) => {
+//     const { email, password } = req.body;
+//     const result = await manager.login(email, password);
 
-    if (result) {
-        req.session.user = result;
-        res.redirect("/products");
-    } else {
-        res.send("Usuario o contraseña inválido!");
-    }
+//     if (result) {
+//         req.session.user = result;
+//         res.redirect("/products");
+//     } else {
+//         res.send("Usuario o contraseña inválido!");
+//     }
+// })
+
+router.post("/login", passport.authenticate("loginStrategy",{
+    failureRedirect:"/failure-login"
+}), (req, res) => {
+    res.redirect("/profile");
 })
 
 router.post("/logout", (req, res) => {
@@ -35,7 +36,5 @@ router.post("/logout", (req, res) => {
         res.redirect("/login");
     })
 })
-
-
 
 export default router;
