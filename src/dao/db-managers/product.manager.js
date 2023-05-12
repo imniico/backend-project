@@ -2,19 +2,9 @@ import productModel from "../models/product.model.js";
 
 export default class ProductManager {
     constructor() {
-        // console.log("ProductManager - MongoDB");
     }
 
     getProducts = async (limit, page, sort, category) => {
-        //const products = await productModel.find();
-
-        // const products = await productModel.aggregate([
-        //     { $match: query },
-        //     { $sort: sort ? { price: sort==="asc" ? 1 : -1 } : { _id: 1 } },
-        //     { $limit: limit ? Number(limit) : 10 }
-        //     //paginación?
-        // ]);
-
         const products = await productModel.paginate(
 
             category ? { category: category } : {}

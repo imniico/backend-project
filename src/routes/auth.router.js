@@ -1,47 +1,21 @@
 import { Router } from 'express';
-import UserManager from '../dao/db-managers/user.manager.js';
-import passport from 'passport';
+import AuthController from '../controllers/auth.controller.js';
 
 const router = Router();
-const manager = new UserManager();
 
-router.post("/signup", passport.authenticate("signupStrategy", {
-    failureRedirect:"/failure-signup"
-}), (req, res) => {
-    res.redirect("/profile");
-})
+router.post("/signup", AuthController.signup, AuthController.redirectProfile)
 
-router.post("/login", passport.authenticate("loginStrategy",{
-    failureRedirect:"/failure-login"
-}), (req, res) => {
-    res.redirect("/profile");
-})
+router.post("/login", AuthController.login, AuthController.redirectProfile)
 
-router.post("/logout", (req, res) => {
-    req.logOut((e) => {
-        if(e) return res.send("No se pudo cerrar la sesión!");
-        req.session.destroy((e) => {
-            if(e) return res.send("No se pudo cerrar la sesión!");
-            res.redirect("/login");
-        })
-    })
-})
+router.post("/logout", AuthController.logout)
 
-router.get("/github", passport.authenticate("githubSignup"));
+router.get("/github", AuthController.githubSignup );
 
-router.get("/github-callback", passport.authenticate("githubSignup",{
-    failureRedirect:"/failure-signup"
-}),(req, res) => {
-    res.redirect("/profile");
-});
+router.get("/github-callback", AuthController.githubSignupCB, AuthController.redirectProfile);
 
-router.get("/githublogin", passport.authenticate("githubLogin"));
+router.get("/githublogin", AuthController.githubLogin);
 
-router.get("/github-callback-login", passport.authenticate("githubLogin",{
-    failureRedirect:"/failure-login"
-}),(req, res) => {
-    res.redirect("/profile");
-});
+router.get("/github-callback-login", AuthController.githubLoginCB , AuthController.redirectProfile);
 
 export default router;
 

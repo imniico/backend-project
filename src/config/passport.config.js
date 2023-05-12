@@ -3,7 +3,7 @@ import LocalStrategy from "passport-local";
 import GithubStrategy from "passport-github2";
 import userModel from "../dao/models/user.model.js";
 import { createHash, isValidPassword } from "../utils.js";
-
+import { config } from './config.js';
 
 const initializedPassport = () => {
     passport.use("signupStrategy", new LocalStrategy(
@@ -19,7 +19,7 @@ const initializedPassport = () => {
                 }
                 let rol;
                 const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
-                regex.test(username) ? rol = "admin" : rol = "usuario";
+                regex.test(username) ? rol = "superadmin" : rol = "usuario";
                 const newUser = {
                     email: username,
                     password: createHash(password),
@@ -38,14 +38,28 @@ const initializedPassport = () => {
             usernameField: "email",
             passReqToCallback: true
         },
-        async(req, username, password, done) => {
+        async (req, username, password, done) => {
             try {
-                const user = await userModel.findOne({ email: username })
-                if (user && isValidPassword(user, password)){
-                    return done(null, user);
-                } else {
-                    return done(null, false);
-                }                
+                const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
+
+                if (regex.test(username)) {
+                    if (username === config.auth.acc && password === config.auth.pwd) {
+                        // un unico superadmin (el que esta en .env)
+                        const superadmin = await userModel.findOne({ email: username })
+                        return done(null, superadmin);
+                    } else { 
+                        // aca entra si tiene @coder, pero no es el de .env, no loguea
+                        return done(null, false);
+                    }
+                } else { // aca entra cualquier usuario
+                    const user = await userModel.findOne({ email: username })
+                    if (user && isValidPassword(user, password)) {
+                        return done(null, user);
+                    } else {
+                        return done(null, false);
+                    }
+                }
+
             } catch (error) {
                 return done(error);
             }
@@ -58,10 +72,10 @@ const initializedPassport = () => {
             clientSecret: "3fcb82a1434e14fb85fa30a1c2574fdb3aad3e10",
             callbackURL: "http://localhost:8080/api/sessions/github-callback"
         },
-        async(accessToken, refreshToken, profile, done) => {
+        async (accessToken, refreshToken, profile, done) => {
             try {
                 const userExists = await userModel.findOne({ email: profile.username })
-                if(userExists){
+                if (userExists) {
                     return done(null, false) // userExists
                 }
                 // let rol;
@@ -86,14 +100,14 @@ const initializedPassport = () => {
             clientSecret: "3fcb82a1434e14fb85fa30a1c2574fdb3aad3e10",
             callbackURL: "http://localhost:8080/api/sessions/github-callback-login"
         },
-        async(accessToken, refreshToken, profile, done) => {
+        async (accessToken, refreshToken, profile, done) => {
             try {
                 const user = await userModel.findOne({ email: profile.username })
-                if (user && isValidPassword(user, profile.id)){
+                if (user && isValidPassword(user, profile.id)) {
                     return done(null, user);
                 } else {
                     return done(null, false);
-                }                
+                }
             } catch (error) {
                 return done(error);
             }

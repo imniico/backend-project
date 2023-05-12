@@ -10,7 +10,8 @@ import passport from 'passport';
 // utilidades
 import __dirname from './utils.js';
 import ChatManager from './dao/db-managers/chat.manager.js';
-import { initializedPassport } from './config/passport.config.js'; 
+import { initializedPassport } from './config/passport.config.js';
+import { config } from './config/config.js';
 
 // routes
 import productsRouter from './routes/products.router.js';
@@ -22,35 +23,36 @@ import authRouter from "./routes/auth.router.js"
 const app = express();
 const messages = [];
 const chatManager = new ChatManager();
+const port = config.server.port;
+const mongoUrl = config.mongo.url;
+const mongoSessionSecret = config.mongo.secret;
 
 // handlebars
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
-// uses
+// middlewares
 app.use(express.static(__dirname + '/../public'));
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: "mongodb+srv://imniico:imniicopass@nicocluster.9pxn0oe.mongodb.net/ecommerce?retryWrites=true&w=majority"
+        mongoUrl: mongoUrl
     }),
-    secret: "nicopass",
+    secret: mongoSessionSecret,
     resave: true,
     saveUninitialized: true
 }));
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+})
 
 // passport
 initializedPassport(); 
 app.use(passport.initialize()); 
 app.use(passport.session()); 
-
-// middle
-app.use((req, res, next) => {
-    req.io = io;
-    next();
-})
 
 // routes
 app.use("/api/products", productsRouter);
@@ -58,8 +60,9 @@ app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", authRouter);
 app.use("/", viewsRouter);
 
-const httpServer = app.listen(8080, () => {
-    console.log('Server escuchando en 8080');
+// server
+const httpServer = app.listen(port, () => {
+    console.log(`Server escuchando en puerto ${port}`);
 });
 
 // websockets
@@ -81,7 +84,7 @@ io.on("connection", (socket) => {
 
 // mongodb connect
 mongoose
-    .connect("mongodb+srv://imniico:imniicopass@nicocluster.9pxn0oe.mongodb.net/ecommerce?retryWrites=true&w=majority")
+    .connect(mongoUrl)
     .then((conn) => {
         console.log("Conectado a la DB!")
     });
