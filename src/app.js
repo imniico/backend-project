@@ -2,14 +2,13 @@
 import express, { urlencoded } from 'express';
 import { engine } from 'express-handlebars';
 import { Server } from 'socket.io';
-import mongoose from 'mongoose';
 import session from 'express-session';
 import MongoStore from "connect-mongo";
 import passport from 'passport'; 
 
 // utilidades
 import __dirname from './utils.js';
-import ChatManager from './dao/db-managers/chat.manager.js';
+import ChatMongo from './dao/managers/mongo/chat.mongo.js';
 import { initializedPassport } from './config/passport.config.js';
 import { config } from './config/config.js';
 
@@ -22,7 +21,7 @@ import authRouter from "./routes/auth.router.js"
 // app
 const app = express();
 const messages = [];
-const chatManager = new ChatManager();
+const chatService = new ChatMongo();
 const port = config.server.port;
 const mongoUrl = config.mongo.url;
 const mongoSessionSecret = config.mongo.secret;
@@ -72,7 +71,7 @@ io.on("connection", (socket) => {
 
     socket.on("chat-message", (data) => {
         messages.push(data);
-        chatManager.addMessage(data);
+        chatService.addMessage(data);
         io.emit("messages", messages);
     });
 
@@ -82,9 +81,3 @@ io.on("connection", (socket) => {
     })
 });
 
-// mongodb connect
-mongoose
-    .connect(mongoUrl)
-    .then((conn) => {
-        console.log("Conectado a la DB!")
-    });

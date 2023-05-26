@@ -1,9 +1,9 @@
 import { Router, json } from 'express';
-import ProductManager from '../dao/db-managers/product.manager.js';
-import CartManager from '../dao/db-managers/cart.manager.js';
+import { ProductMongo } from '../dao/managers/mongo/product.mongo.js';
+import CartManager from '../dao/managers/mongo/cart.mongo.js';
 
 const viewsRouter = Router();
-const manager = new ProductManager('./src/data/products.json');
+const manager = new ProductMongo('./src/data/products.json');
 const cartManager = new CartManager();
 
 viewsRouter.use(json());

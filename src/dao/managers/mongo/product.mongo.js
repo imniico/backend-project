@@ -1,11 +1,13 @@
-import productModel from "../models/product.model.js";
+import productModel from "../../models/product.model.js";
 
-export default class ProductManager {
+export class ProductMongo {
+    
     constructor() {
+        this.model = productModel;
     }
 
     getProducts = async (limit, page, sort, category) => {
-        const products = await productModel.paginate(
+        const products = await this.model.paginate(
 
             category ? { category: category } : {}
             ,
@@ -22,12 +24,12 @@ export default class ProductManager {
     }
 
     addProduct = async (product) => {
-        const products = await productModel.find().lean();
+        const products = await this.model.find().lean();
 
         const validarCode = products.find((prod) => Number(prod.code) === Number(product.code))
         if (validarCode) { return `Ya existe producto con code ${product.code}!`; }
 
-        const result = await productModel.create(product);
+        const result = await this.model.create(product);
         return result;
     }
 
@@ -35,7 +37,7 @@ export default class ProductManager {
         if (pid.length != 24) {
             return "";
         }
-        const prodEncontrado = await productModel.findOne({ _id: pid });
+        const prodEncontrado = await this.model.findOne({ _id: pid });
         return prodEncontrado;
     }
 
@@ -44,7 +46,7 @@ export default class ProductManager {
             return "ID Inválido";
         }
 
-        const updatedProduct = await productModel.findOneAndUpdate(
+        const updatedProduct = await this.model.findOneAndUpdate(
             { _id: pid },
             product,
             { new: true }
@@ -54,7 +56,7 @@ export default class ProductManager {
 
     deleteProduct = async (pid) => {
         try {
-            const result = await productModel.deleteOne({ _id: pid })
+            const result = await this.model.deleteOne({ _id: pid })
             return result;
         } catch (err) {
             return err.message;

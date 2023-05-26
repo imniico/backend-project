@@ -1,29 +1,30 @@
-import cartModel from "../models/cart.model.js";
+import cartModel from "../../models/cart.model.js";
 
-export default class CartManager{
+export default class CartMongo{
     constructor(){
+        this.model = cartModel;
     }
 
     getCarts = async () => {
-        const carts = await cartModel.find();
+        const carts = await this.model.find();
         return carts;
     }
 
     addCart = async (cart) => {
-        const result = await cartModel.create(cart);
+        const result = await this.model.create(cart);
         return result;
     }
 
     getCartById = async (cid) => {
         if (cid.length != 24){ return "ID Inválido"; }
 
-        const cartEncontrado = await cartModel.findById(cid).lean();
+        const cartEncontrado = await this.model.findById(cid).lean();
         return cartEncontrado;
     }
 
     addToCart = async (cid, pid) => {
         if (cid.length != 24 ){ return "ID Inválido de Carrito"}
-        const cart = await cartModel.findById(cid);
+        const cart = await this.model.findById(cid);
         if (!cart){ return "Carrito no encontrado" }
         
         cart.products.forEach((a) => {
@@ -55,7 +56,7 @@ export default class CartManager{
 
     deleteFromCart = async (cid, pid) => {
         if (cid.length != 24 ){ return "ID Inválido de Carrito"}
-        const cart = await cartModel.findById(cid);
+        const cart = await this.model.findById(cid);
         if (!cart){ return "Carrito no encontrado" }
 
         const existingProduct = cart.products.find((p) => p.product.id === pid);
@@ -70,7 +71,7 @@ export default class CartManager{
 
     updateCart = async (cid, prods) => {
         if (cid.length != 24 ){ return "ID Inválido de Carrito"}
-        const cart = await cartModel.findById(cid);
+        const cart = await this.model.findById(cid);
         if (!cart){ return "Carrito no encontrado" }
 
         prods.map((prod) => {
@@ -87,7 +88,7 @@ export default class CartManager{
 
     updateQuantInCart = async (cid, pid, quant) => {
         if (cid.length != 24 ){ return "ID Inválido de Carrito"}
-        const cart = await cartModel.findById(cid);
+        const cart = await this.model.findById(cid);
         if (!cart){ return "Carrito no encontrado" }
 
         const existingProduct = cart.products.find((p) => p.product.id === pid);
@@ -104,7 +105,7 @@ export default class CartManager{
 
     clearCart = async (cid) => {
         if (cid.length != 24 ) { return "ID Inválido de Carrito" }
-        const cart = await cartModel.findById(cid);
+        const cart = await this.model.findById(cid);
         if (!cart){ return "Carrito no encontrado" }
 
         cart.products = [];
