@@ -1,4 +1,5 @@
-import { productsDAO } from "../dao/factory.js"
+import { productsDAO } from "../dao/factory.js";
+import { CreateProductDTO, GetProductDTO, UpdateProductDTO } from "../dao/dto/product.dto.js";
 
 export default class ProductController{
     
@@ -16,15 +17,16 @@ export default class ProductController{
         const productFound = await productsDAO.getProductsById(pid);
         
         if(productFound){
-            res.send({ status:"ok", payload: productFound });
+            const result = new GetProductDTO(productFound)
+            res.send({ status:"ok", payload: result });
         } else {
             res.send({ status:"error", payload:`Producto con id ${pid} no encontrado` });
         };
     }
 
     static addProduct = async (req, res, next) => {
-        const { title, description, price, code, stock, category } = req.body;
-        const result = await productsDAO.addProduct({ title, description, price, code, stock, category });
+        const productDTO = new CreateProductDTO(req.body);        
+        const result = await productsDAO.addProduct(productDTO);
     
         //middle-webosockets
         const products = await productsDAO.getProducts(1000);
@@ -36,10 +38,9 @@ export default class ProductController{
 
     static updateProduct = async (req, res) => {
         const { pid } = req.params;
-        const { title, description, price, code, stock, category, thumbnails, status } = req.body;
-        const updatedProductData = { title, description, price, code, stock, category, thumbnails, status }
+        const productDTO = new UpdateProductDTO(req.body);
     
-        const result = await productsDAO.updateProduct(pid, updatedProductData);
+        const result = await productsDAO.updateProduct(pid, productDTO);
         res.status(201).send({ status:"ok", payload: result });
     }
 
