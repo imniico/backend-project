@@ -1,6 +1,6 @@
 import cartModel from "../../models/cart.model.js";
 
-export default class CartMongo{
+export class CartMongo{
     constructor(){
         this.model = cartModel;
     }

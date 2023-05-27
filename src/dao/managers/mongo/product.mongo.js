@@ -33,7 +33,7 @@ export class ProductMongo {
         return result;
     }
 
-    getProductsById = async (pid) => {
+    getProductById = async (pid) => {
         if (pid.length != 24) {
             return "";
         }
