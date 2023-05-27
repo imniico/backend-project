@@ -1,5 +1,4 @@
-// import { productsDAO } from "../dao/factory.js";
-import { productService } from "../repository/index.js";
+import { productService } from "../services/index.js";
 
 export default class ProductController{
     

@@ -1,4 +1,7 @@
 import cartModel from "../../models/cart.model.js";
+import ticketModel from "../../models/ticket.model.js";
+import productModel from "../../models/product.model.js";
+import {v4 as uuid} from "uuid";
 
 export class CartMongo{
     constructor(){
@@ -112,6 +115,65 @@ export class CartMongo{
         cart.save();
 
         return cart.products;
+    }
+
+    purchase = async (cid, user) => {
+        if (cid.length != 24 ){ return "ID Inválido de Carrito" }
+        
+        const cart = await this.model.findById(cid);
+        if (!cart){ return "Carrito no encontrado" }
+        if (cart.products.length === 0) { return "Carrito vacío" }
+
+        let ticketProducts = [];
+        let ticketCreated;
+        let rejectedProducts = [];
+        let sinStock = [];
+    
+        for (let i = 0; i < cart.products.length; i++) {
+            let cartItem = cart.products[i];
+            let productDB = cartItem.product;
+            
+            if (cartItem.quantity <= productDB.stock){
+                ticketProducts.push(cartItem);
+            } else {
+                rejectedProducts.push(cartItem);
+            }
+        }
+
+        if (ticketProducts.length != 0){
+
+            // TICKET
+            const ticket = {
+                code: uuid(),
+                purchase_datetime: Date.now(),
+                amount: ticketProducts.reduce((total, item) => total + item.quantity * item.product.price, 0),
+                purcharser: "user@gmail.com" //user
+                //No puedo loguear desde el Postman, por lo tanto no existe el req.user.email, debería estar aca
+            }
+            ticketCreated = await ticketModel.create(ticket);
+
+            // ACTUALIZACIÓN STOCK
+            ticketProducts.forEach(async (p) => {
+                await productModel.findOneAndUpdate(
+                    { _id: p.product._id },
+                    { stock: p.product.stock - p.quantity },
+                    { new: true }
+                )
+            })
+
+            // ACTUALIZAR CARRITO
+            cart.products = rejectedProducts;
+            cart.save();
+
+        } 
+        if (rejectedProducts.length != 0){
+            rejectedProducts.forEach((p) => {
+                sinStock.push(p.product._id)
+            })
+        }
+        
+        return {ticket: ticketCreated, sinStock: sinStock}
+        
     }
 }
 

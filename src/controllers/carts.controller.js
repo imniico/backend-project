@@ -1,4 +1,4 @@
-import { cartService } from "../repository/index.js";
+import { cartService } from "../services/index.js";
 
 export default class CartController{
     
@@ -59,5 +59,15 @@ export default class CartController{
         const result = await cartService.clearCart(cid);
     
         res.send({ status:"ok", payload: result })
+    }
+
+    static purchase = async (req, res) => {
+        const { cid } = req.params;
+        const result = await cartService.purchase(cid);
+
+        res.send({ status:"ok", payload: result })
+        
+
+        
     }
 }

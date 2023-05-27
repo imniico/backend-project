@@ -28,4 +28,7 @@ cartsRouter.put("/:cid/product/:pid", CartController.updateQuantityInCart)
 // DELETE /:cid
 cartsRouter.delete("/:cid", CartController.clearCart)
 
+// POST /:cid/purchase
+cartsRouter.post("/:cid/purchase", CartController.purchase)
+
 export default cartsRouter;

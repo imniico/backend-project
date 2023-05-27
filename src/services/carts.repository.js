@@ -42,4 +42,9 @@ export class CartRepository{
         const result = await this.dao.clearCart(cid);
         return result;
     }
+
+    async purchase(cid){
+        const result = await this.dao.purchase(cid);
+        return result;
+    }
 }
