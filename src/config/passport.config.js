@@ -13,20 +13,26 @@ const initializedPassport = () => {
         },
         async (req, username, password, done) => {
             try {
+                const {first_name, last_name, age} = req.body
                 const user = await userModel.findOne({ email: username })
-                if (user) {
-                    return done(null, false);
-                }
-                let rol;
+                if (user) { return done(null, false); }
+                
+                let role;
                 const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
-                regex.test(username) ? rol = "superadmin" : rol = "usuario";
+                regex.test(username) ? role = "superadmin" : role = "usuario";
+                
                 const newUser = {
+                    first_name,
+                    last_name,
                     email: username,
+                    age,
                     password: createHash(password),
-                    rol
+                    role
                 };
+               
                 const userCreated = await userModel.create(newUser);
                 return done(null, userCreated);
+
             } catch (error) {
                 return done(error);
             }
@@ -75,19 +81,26 @@ const initializedPassport = () => {
         async (accessToken, refreshToken, profile, done) => {
             try {
                 const userExists = await userModel.findOne({ email: profile.username })
-                if (userExists) {
-                    return done(null, false) // userExists
-                }
-                // let rol;
-                // const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
-                // regex.test(profile.username) ? rol = "admin" : rol = "usuario";
+                if (userExists) { return done(null, false) }
+                
+
+                const nombre = profile.displayName.split(" ");
+                const first_name = nombre[0];
+                const last_name = nombre.slice(1).join(" ");
+
+
                 const newUser = {
+                    first_name,
+                    last_name,
                     email: profile.username,
+                    age: 0,
                     password: createHash(profile.id),
-                    rol: "usuario" // hardcoded 
+                    role: "usuario" 
                 };
+
                 const userCreated = await userModel.create(newUser);
                 return done(null, userCreated);
+
             } catch (error) {
                 return done(error);
             }
@@ -123,6 +136,8 @@ const initializedPassport = () => {
         const user = await userModel.findById(id);
         return done(null, user); // se guarda en req.user
     })
+
+    
 }
 
 export { initializedPassport }

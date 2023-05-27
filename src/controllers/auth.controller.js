@@ -1,4 +1,7 @@
 import passport from 'passport';
+import { SessionMongo } from '../dao/managers/mongo/session.mongo.js';
+
+const sessionManager = new SessionMongo();
 
 export default class AuthController{
 
@@ -33,6 +36,17 @@ export default class AuthController{
     // REDIRECT
     static redirectProfile = (req, res) => {
         res.redirect("/profile");
+    }
+
+    // CURRENT
+    static getCurrent = async (req, res) => {
+        if (req.user){
+            const result = await sessionManager.getCurrent(req.user._id);
+            res.send(result)
+        } else {
+            res.send("No logueado!")
+        }
+        
     }
 
     

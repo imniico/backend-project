@@ -17,5 +17,7 @@ router.get("/githublogin", AuthController.githubLogin);
 
 router.get("/github-callback-login", AuthController.githubLoginCB , AuthController.redirectProfile);
 
+router.get("/current", AuthController.getCurrent )
+
 export default router;
 
