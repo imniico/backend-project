@@ -14,6 +14,7 @@ import { config } from './config/config.js';
 
 // routes
 import productsRouter from './routes/products.router.js';
+// import { ProductRouter } from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
 import viewsRouter from './routes/views.router.js';
 import authRouter from "./routes/auth.router.js"
@@ -54,6 +55,8 @@ app.use(passport.initialize());
 app.use(passport.session()); 
 
 // routes
+// const productsRouter = new ProductRouter();
+
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", authRouter);

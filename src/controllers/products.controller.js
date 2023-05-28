@@ -14,7 +14,7 @@ export default class ProductController{
         const { pid } = req.params;
         const result = await productService.getProductById(pid);
         
-        if(result){
+        if(result.title){
             res.send({ status:"ok", payload: result });
         } else {
             res.send({ status:"error", payload:`Producto con id ${pid} no encontrado` });

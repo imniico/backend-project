@@ -3,7 +3,6 @@ import LocalStrategy from "passport-local";
 import GithubStrategy from "passport-github2";
 import userModel from "../dao/models/user.model.js";
 import { createHash, isValidPassword } from "../utils.js";
-import { config } from './config.js';
 
 const initializedPassport = () => {
     passport.use("signupStrategy", new LocalStrategy(
@@ -17,10 +16,11 @@ const initializedPassport = () => {
                 const user = await userModel.findOne({ email: username })
                 if (user) { return done(null, false); }
                 
-                let role;
-                const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
-                regex.test(username) ? role = "superadmin" : role = "usuario";
-                
+                let role = "user";
+                if(username.endsWith("@coder.com")){
+                    role = "admin";
+                }
+                                
                 const newUser = {
                     first_name,
                     last_name,
@@ -41,31 +41,14 @@ const initializedPassport = () => {
 
     passport.use("loginStrategy", new LocalStrategy(
         {
-            usernameField: "email",
-            passReqToCallback: true
+            usernameField: "email"
         },
-        async (req, username, password, done) => {
+        async (username, password, done) => {
             try {
-                const regex = /^[a-zA-Z0-9._%+-]+@coder\.com$/;
-
-                if (regex.test(username)) {
-                    if (username === config.auth.acc && password === config.auth.pwd) {
-                        // un unico superadmin (el que esta en .env)
-                        const superadmin = await userModel.findOne({ email: username })
-                        return done(null, superadmin);
-                    } else { 
-                        // aca entra si tiene @coder, pero no es el de .env, no loguea
-                        return done(null, false);
-                    }
-                } else { // aca entra cualquier usuario
-                    const user = await userModel.findOne({ email: username })
-                    if (user && isValidPassword(user, password)) {
-                        return done(null, user);
-                    } else {
-                        return done(null, false);
-                    }
-                }
-
+                const user = await userModel.findOne({email: username});
+                if(!user){ return done(null, false) }
+                if(!isValidPassword(user, password)) { return done(null, false) }
+                return done(null, user);
             } catch (error) {
                 return done(error);
             }
@@ -95,7 +78,7 @@ const initializedPassport = () => {
                     email: profile.username,
                     age: 0,
                     password: createHash(profile.id),
-                    role: "usuario" 
+                    role: "user" 
                 };
 
                 const userCreated = await userModel.create(newUser);
