@@ -33,7 +33,6 @@ app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
 // middlewares
-app.use(errorHandler); // No funciona?
 app.use(express.static(__dirname + '/../public'));
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
@@ -50,11 +49,12 @@ app.use((req, res, next) => {
     next();
 })
 
-
 // passport
 initializedPassport(); 
 app.use(passport.initialize()); 
 app.use(passport.session()); 
+
+app.use(errorHandler); // No funciona?
 
 // routes
 app.use("/api/products", productsRouter);
