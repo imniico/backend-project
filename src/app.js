@@ -1,4 +1,4 @@
-// librerias
+// import librerias
 import express, { urlencoded } from 'express';
 import { engine } from 'express-handlebars';
 import { Server } from 'socket.io';
@@ -6,20 +6,20 @@ import session from 'express-session';
 import MongoStore from "connect-mongo";
 import passport from 'passport'; 
 
-// utilidades
+// import utilidades
 import __dirname from './utils.js';
 import ChatMongo from './dao/managers/mongo/chat.mongo.js';
 import { initializedPassport } from './config/passport.config.js';
 import { config } from './config/config.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
-// routes
+// import routes
 import productsRouter from './routes/products.router.js';
-// import { ProductRouter } from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
 import viewsRouter from './routes/views.router.js';
 import authRouter from "./routes/auth.router.js"
 
-// app
+// app & consts
 const app = express();
 const messages = [];
 const chatService = new ChatMongo();
@@ -33,6 +33,7 @@ app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
 // middlewares
+app.use(errorHandler); // No funciona?
 app.use(express.static(__dirname + '/../public'));
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
@@ -49,14 +50,13 @@ app.use((req, res, next) => {
     next();
 })
 
+
 // passport
 initializedPassport(); 
 app.use(passport.initialize()); 
 app.use(passport.session()); 
 
 // routes
-// const productsRouter = new ProductRouter();
-
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", authRouter);

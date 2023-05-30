@@ -1,4 +1,9 @@
 import { productService } from "../services/index.js";
+import { generateProduct } from "../utils.js";
+import { CustomError } from "../services/customError.service.js";
+import { EError } from "../enums/EError.js";
+import { generateProductErrorInfo } from "../services/productErrorInfo.js";
+
 
 export default class ProductController{
     
@@ -21,7 +26,17 @@ export default class ProductController{
         };
     }
 
-    static addProduct = async (req, res, next) => {      
+    static addProduct = async (req, res, next) => {     
+        const { title, description, price, code, stock, category} = req.body;
+        if(!title || !description || !price || !code || !stock || !category ){
+            CustomError.createError({
+                name:"Product Create Error",
+                cause: generateProductErrorInfo(req.body),
+                message: "Error creando el producto",
+                errorCode: EError.INVALID_JSON
+            });
+        };
+
         const result = await productService.addProduct(req.body);
     
         //middle-webosockets
@@ -43,6 +58,16 @@ export default class ProductController{
         const { pid } = req.params;
         const result = await productService.deleteProduct(pid);
 
+        res.send(result);
+    }
+
+    static getMockingProducts = async (req, res) => {
+        const cant = parseInt(req.query.cant) || 100;
+        let result = [];
+        for (let i = 0; i < cant; i++) {
+            result.push(generateProduct())           
+        }
+        
         res.send(result);
     }
 
