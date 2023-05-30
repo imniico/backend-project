@@ -15,7 +15,7 @@ productsRouter.get("/mockingproducts", ProductController.getMockingProducts);
 productsRouter.get("/:pid", ProductController.getProductById);
 
 // POST /
-productsRouter.post("/", ProductController.addProduct);
+productsRouter.post("/", checkRole(["admin"]), ProductController.addProduct); 
 
 // PUT /:pid
 productsRouter.put("/:pid", checkRole(["admin"]), ProductController.updateProduct);
