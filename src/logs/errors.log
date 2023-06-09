@@ -1,2 +1,4 @@
 {"level":"fatal","message":"/loggerTests - method: GET"}
 {"level":"error","message":"/loggerTests - method: GET"}
+{"level":"fatal","message":"/loggerTests - method: GET"}
+{"level":"error","message":"/loggerTests - method: GET"}

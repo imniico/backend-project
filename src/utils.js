@@ -122,6 +122,8 @@ export const addLogger = (req, res, next) => {
     } else {
         req.logger = prodLogger;
     }
+
+    req.logger.info(`${req.url} - method: ${req.method}`);
     next()
 }
 
