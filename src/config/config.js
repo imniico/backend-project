@@ -12,7 +12,8 @@ const MONGO_URL = processenv.MONGO_URL;
 const MONGO_SESSION_SECRET = processenv.MONGO_SESSION_SECRET;
 const ADMIN_EMAIL = processenv.ADMIN_EMAIL;
 const ADMIN_PASSWORD = processenv.ADMIN_PASSWORD;
-// const PERSISTENCE = processenv.PERSISTENCE; // ahora se hace con los argumentos
+const NODE_ENV = processenv.NODE_ENV;
+
 
 // argumentos
 const program = new Command();
@@ -32,6 +33,7 @@ export const config = {
     auth:{
         acc: ADMIN_EMAIL,
         pwd: ADMIN_PASSWORD
-    }
+    },
+    env: NODE_ENV
 }
 

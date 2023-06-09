@@ -12,6 +12,7 @@ import ChatMongo from './dao/managers/mongo/chat.mongo.js';
 import { initializedPassport } from './config/passport.config.js';
 import { config } from './config/config.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { addLogger } from './utils.js';
 
 // import routes
 import productsRouter from './routes/products.router.js';
@@ -49,18 +50,32 @@ app.use((req, res, next) => {
     next();
 })
 
+
 // passport
 initializedPassport(); 
 app.use(passport.initialize()); 
 app.use(passport.session()); 
 
-app.use(errorHandler); // No funciona?
+app.use(errorHandler); 
+app.use(addLogger);
+
+app.get("/loggerTests", (req, res) => {
+    req.logger.fatal(`${req.url} - method: ${req.method}`);
+    req.logger.error(`${req.url} - method: ${req.method}`);
+    req.logger.warning(`${req.url} - method: ${req.method}`);
+    req.logger.info(`${req.url} - method: ${req.method}`);
+    req.logger.http(`${req.url} - method: ${req.method}`);
+    req.logger.debug(`${req.url} - method: ${req.method}`);
+    res.send(`Testing de logs en entorno: ${config.env}`)
+})
+
 
 // routes
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", authRouter);
 app.use("/", viewsRouter);
+
 
 // server
 const httpServer = app.listen(port, () => {

@@ -11,21 +11,22 @@ const SECRET_KEY = "tokenSecretKey";
 
 export default __dirname;
 
+// BCRYPT
 export const createHash = (password) => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync());
 };
-
 export const isValidPassword = (user, loginPassword) => {
     return bcrypt.compareSync(loginPassword, user.password);
 };
 
+
+// JWT
 export const generateToken = (user) => {
     const token = jwt.sign(user, SECRET_KEY, {
         expiresIn: "60s"
     });
     return token;
 }
-
 export const validateToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     if(!authHeader) return res.sendStatus(401);
@@ -38,12 +39,12 @@ export const validateToken = (req, res, next) => {
     })
 }
 
+
+// FAKER
 export const customFaker = new Faker({
     locale: [es],
 })
-
 const { commerce, image, database, string } = customFaker;
-
 export const generateProduct = () => {
     return {
         id: database.mongodbObjectId(),
@@ -57,3 +58,74 @@ export const generateProduct = () => {
         stat: true
     }
 }
+
+
+// WINSTON
+import winston from "winston";
+import { config } from './config/config.js';
+
+const logLevels = {
+    fatal: 0,
+    error: 1,
+    warning: 2,
+    info: 3,
+    http: 4,
+    debug: 5
+}
+
+const logColors = {
+    fatal: "red bold blackBG",
+    error: "yellow bold blackBG",
+    warning: "magenta bold blackBG",
+    info: "blue bold blackBG",
+    http: "cyan bold blackBG",
+    debug: "grey bold blackBG"
+}
+
+// Logger en desarrollo
+const devLogger = winston.createLogger({ 
+    levels: logLevels,
+    transports:[
+        new winston.transports.Console({
+            level: "debug",
+            format: winston.format.combine(
+                winston.format.colorize({ colors: logColors }),
+                winston.format.simple()
+            )
+        })
+    ]
+})
+
+// Logger en producción
+const prodLogger = winston.createLogger({ 
+    levels: logLevels,
+    transports:[
+        new winston.transports.Console({
+            level: "info",
+            format: winston.format.combine(
+                winston.format.colorize({ colors: logColors }),
+                winston.format.simple()
+            )
+        }),
+        new winston.transports.File({ 
+            filename: path.join(__dirname, "/logs/errors.log"),
+            level: "error"
+        })
+    ]
+})
+
+const currentEnv = config.env || "development";
+
+export const addLogger = (req, res, next) => {
+    if(currentEnv === "development"){
+        req.logger = devLogger;
+    } else {
+        req.logger = prodLogger;
+    }
+    next()
+}
+
+
+
+
+
