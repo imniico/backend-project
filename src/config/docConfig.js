@@ -13,7 +13,7 @@ const swaggerOptions = {
         },
         servers: [{ url: `http://localhost:${PORT}` }] //servidores
     },
-    apis: [`${__dirname}/docs/**/*.yaml`] //archivos
+    apis: [`${__dirname}/docs/products/Products.yaml`, `${__dirname}/docs/carts/Carts.yaml` ] //archivos
 };
 
 export const swaggerSpecs = swaggerJsdoc(swaggerOptions);

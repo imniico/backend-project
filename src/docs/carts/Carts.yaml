@@ -1,47 +1,212 @@
-/api/carts/:
+paths:
+  /api/carts/:
     get:
       summary: Obtener todos los carritos
       tags:
         - Carritos
+      responses:
+        "200":
+          description: Todos los carritos fueron obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Cart'
       
     post:
       summary: Agregar o crear un carrito
       tags:
         - Carritos
+      requestBody:
+        require: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/postCart'
+      responses:
+        "200":
+          description: Se agregó el carrito correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
 
-  /api/carts/:cid:
+  /api/carts/{cid}:
     get:
       summary: Obtener un carrito con determinado ID
       tags:
         - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid es el id del carrito a obtener
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Carrito con id obtenido correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
     put:
       summary: Modificar un carrito con determinado ID
       tags:
         - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid es el id del carrito a modificar
+          schema:
+            $type: string
+      requestBody:
+        require: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                example:
+                  product: 64717717342832ef7aeed284
+                  quantity: 2
+      responses:
+        "200":
+          description: Carrito con id modificado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+      
     delete:
       summary: Vaciar un carrito con determinado ID
       tags:
         - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid es el id del carrito a vaciar
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Carrito con id vaciado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: ok
+                  payload: []
+      
 
-  /api/carts/:cid/product/:pid:
+  /api/carts/{cid}/product/{pid}:
     post:
       summary: Añadir un producto a un carrito
       tags:
         - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid es el id del carrito a agregar el producto
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id del producto
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Carrito con producto agregado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+
     put:
       summary: Modificar la cantidad de un producto en un carrito
       tags:
         - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid es el id del carrito a modificar una cantidad
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id del producto
+          schema:
+            $type: string
+      requestBody:
+        require: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                quantity: 2
+      responses:
+        "200":
+          description: Carrito con cantidad modificada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
     delete: 
       summary: Eliminar un producto de un carrito
       tags:
         - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid es el id del carrito del cual eliminar un producto
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id del producto
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Carrito sin el producto debido a eliminación
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
 
-  /api/carts/:cid/purchase:
+  /api/carts/{cid}/purchase:
     post:
       summary: Realizar la compra y obtener ticket
       tags:
         - Carritos
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: cid es el id del carrito a realizar la compra
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Compra realizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Ticket'
+      
 
 components:
   schemas:
@@ -58,7 +223,7 @@ components:
             type: object
             properties:
               product:
-                type: Object
+                type: object
                 description: Info del producto que está en el carrito
               quantity:
                 type: Number
@@ -72,3 +237,48 @@ components:
           type: Number
           description: Campo versión generado por MongoDB
           example: 1
+
+    Ticket:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Código de transacción o ticket
+          example: 65511733-9f6c-453f-aa87-03d190c1d75d
+        purchase_datetime:
+          type: string
+          description: Fecha en la que se realizó la compra
+          example: 2023-07-02T21:33:27.284Z
+        amount:
+          type: number
+          description: Total de la compra
+          example: 34000
+        purcharser:
+          type: string
+          description: Email del comprador o usuario
+          example: user@gmail.com
+        _id:
+          type: String
+          description: ID generado por MongoDB
+          example: 64a1ed27737478b3e6922952
+        __v:
+          type: Number
+          description: Campo versión generado por MongoDB
+          example: 0
+
+          
+  
+  requestBodies:
+    postCart:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            example:
+              product: 64717717342832ef7aeed284
+              quantity: 2
+    
+                
+    
