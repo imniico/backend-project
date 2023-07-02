@@ -1,0 +1,217 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - Productos
+      responses:
+        "200":
+          description: Todos los productos fueron obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Product'
+
+    post:
+      summary: Agregar un producto
+      tags:
+        - Productos
+      requestBody:
+        require: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'
+      responses:
+        "201":
+          description: Se agregó el producto correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Product'
+      
+
+  /api/products/{pid}:
+    get:
+      summary: Obtener un producto con determinado ID
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id del producto a obtener
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Producto con id obtenido correctamente
+          content: 
+            application/json:
+                schema:
+                  type: object
+                  example:
+                    title: "Mouse"
+                    code: 123
+                    price: 9000
+                    stock: 1
+                    category: Perifericos
+    put:
+      summary: Modificar un producto con determinado ID
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id producto a modificar
+          schema:
+            $type: string
+      requestBody:
+        require: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'
+      responses:
+        "201":
+          description: Se actualizó el producto correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Product'
+
+
+    delete: 
+      summary: Eliminar un producto con determinado ID
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id producto a eliminar
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Producto eliminado correctamente (deletedCount:1)
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  acknowledged: true
+                  deletedCount: 1
+
+
+components:
+  schemas:
+
+    Response:
+      type: object
+      properties:
+        status:
+          type: String
+          description: Estado de la respuesta
+          example: "ok"
+        payload:
+          type: array
+          description: Array de Product o Cart
+          items:
+            type: Object
+    Product:
+      type: object
+      properties:
+        _id:
+          type: String
+          description: ID generado por MongoDB
+          example: 642c450880db0deff5122940
+        title:
+          type: String
+          description: Nombre del producto
+          example: Mouse
+        description:
+          type: String
+          description: Descripción del producto
+          example: Description Mouse
+        price:
+          type: Number
+          description: Precio del producto
+          example: 12000
+        code:
+          type: Number
+          description: Código del producto - Campo único
+          example: 123
+        stock:
+          type: Number
+          description: Stock del producto
+          example: 1
+        category:
+          type: String
+          description: Categoría del producto
+          example: Perifericos
+        thumbnails:
+          type: array
+          description: Array de links a imágenes del producto
+          items:
+            type: string
+            example: "link.com/imagen.png"
+        stat:
+          type: Boolean
+          description: Estado del producto
+          example: true
+        __v:
+          type: Number
+          description: Campo versión generado por MongoDB
+          example: 0
+        id:
+          type: String
+          description: ID obtenido directo de MongoDB
+          example: 642c450880db0deff5122940
+
+  requestBodies:
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: String
+          description: Nombre del producto
+          example: Mouse
+        description:
+          type: String
+          description: Descripción del producto
+          example: Description Mouse
+        price:
+          type: Number
+          description: Precio del producto
+          example: 12000
+        code:
+          type: Number
+          description: Código del producto - Campo único
+          example: 123
+        stock:
+          type: Number
+          description: Stock del producto
+          example: 1
+        category:
+          type: String
+          description: Categoría del producto
+          example: Perifericos
+        thumbnails:
+          type: array
+          description: Array de links a imágenes del producto
+          items:
+            type: string
+            example: "link.com/imagen.png"
+        stat:
+          type: Boolean
+          description: Estado del producto
+          example: true
+
+
+
+    
+        

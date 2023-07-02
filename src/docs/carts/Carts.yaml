@@ -1,0 +1,74 @@
+/api/carts/:
+    get:
+      summary: Obtener todos los carritos
+      tags:
+        - Carritos
+      
+    post:
+      summary: Agregar o crear un carrito
+      tags:
+        - Carritos
+
+  /api/carts/:cid:
+    get:
+      summary: Obtener un carrito con determinado ID
+      tags:
+        - Carritos
+    put:
+      summary: Modificar un carrito con determinado ID
+      tags:
+        - Carritos
+    delete:
+      summary: Vaciar un carrito con determinado ID
+      tags:
+        - Carritos
+
+  /api/carts/:cid/product/:pid:
+    post:
+      summary: Añadir un producto a un carrito
+      tags:
+        - Carritos
+    put:
+      summary: Modificar la cantidad de un producto en un carrito
+      tags:
+        - Carritos
+    delete: 
+      summary: Eliminar un producto de un carrito
+      tags:
+        - Carritos
+
+  /api/carts/:cid/purchase:
+    post:
+      summary: Realizar la compra y obtener ticket
+      tags:
+        - Carritos
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: String
+          description: ID generado por MongoDB
+          example: 642c450880db0deff5122940
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: Object
+                description: Info del producto que está en el carrito
+              quantity:
+                type: Number
+                description: Unidadades del producto en el carrito
+                example: 2
+              _id:
+                type: String
+                description: ID generado por MongoDB
+                example: 642c450880db0deff5129999
+        __v:
+          type: Number
+          description: Campo versión generado por MongoDB
+          example: 1

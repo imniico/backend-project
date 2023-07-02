@@ -8,7 +8,7 @@ productsRouter.use(json());
 // GET /
 productsRouter.get("/", ProductController.getProducts);
 
-// GET /mockingprodcuts
+// GET /mockingprodcuts // NO DOCUMENTADA
 productsRouter.get("/mockingproducts", ProductController.getMockingProducts);
 
 // GET /:pid

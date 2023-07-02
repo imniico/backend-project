@@ -13,6 +13,8 @@ import { initializedPassport } from './config/passport.config.js';
 import { config } from './config/config.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { addLogger } from './utils.js';
+import { swaggerSpecs } from "./config/docConfig.js";
+import swaggerUI from "swagger-ui-express";
 
 // import routes
 import productsRouter from './routes/products.router.js';
@@ -51,6 +53,7 @@ app.use((req, res, next) => {
 })
 
 
+
 // passport
 initializedPassport(); 
 app.use(passport.initialize()); 
@@ -69,6 +72,8 @@ app.get("/loggerTests", (req, res) => {
     res.send(`Testing de logs en entorno: ${config.env}`)
 })
 
+// swagger docs
+app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 
 // routes
 app.use("/api/products", productsRouter);
