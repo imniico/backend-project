@@ -11,8 +11,7 @@ export class ProductRepository{
     }
 
     async getProductById(pid){
-        const product = await this.dao.getProductById(pid);
-        const result = new GetProductDTO(product);
+        const result = await this.dao.getProductById(pid);
         return result;
     }
 

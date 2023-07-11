@@ -18,6 +18,5 @@ export class SessionMongo{
         } else {
             return "No logueado!"
         }
-
     }
 }
